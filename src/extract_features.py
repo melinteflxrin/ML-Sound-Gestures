@@ -2,6 +2,7 @@ import librosa
 import numpy as np
 import os
 
+
 def extract_mfcc(file_path, n_mfcc=13):
     """
     extract mean MFCC features from an audio file
@@ -10,6 +11,7 @@ def extract_mfcc(file_path, n_mfcc=13):
     mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
     mfcc_mean = np.mean(mfcc, axis=1)
     return mfcc_mean
+
 
 def process_folder(folder_path, label):
     """
@@ -24,6 +26,7 @@ def process_folder(folder_path, label):
             X.append(features)
             y.append(label)
     return X, y
+
 
 def main():
     double_clap_folder = "data/raw/double_clap"
@@ -43,6 +46,7 @@ def main():
     os.makedirs("data/processed", exist_ok=True)
     np.save("data/processed/X.npy", X)
     np.save("data/processed/y.npy", y)
+
 
 if __name__ == "__main__":
     main()
