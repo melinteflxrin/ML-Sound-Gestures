@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, accuracy_score
+import joblib
 
 
 # load features and labels
@@ -27,3 +28,8 @@ y_pred = clf.predict(X_test)
 # evaluate
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+
+# save the trained model
+joblib.dump(clf, 'data/processed/svm_model.joblib')
+print("Model saved to data/processed/svm_model.joblib")

@@ -24,5 +24,15 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
 ))
 
 
-sp.next_track()
-print("Skipped to the next track!")
+def sound_gesture(gesture):
+    if gesture == "double_clap":
+        sp.next_track()
+        print("Double clap detected: Skipped to the next track.")
+    elif gesture == "snap":
+        sp.pause_playback()
+        print("Snap detected: Paused playback.")
+    else:
+        print(f"Unknown gesture: {gesture}")
+
+# for testing
+# sound_gesture("double_clap")
