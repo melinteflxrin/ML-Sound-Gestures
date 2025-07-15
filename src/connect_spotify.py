@@ -34,5 +34,6 @@ def sound_gesture(gesture):
     else:
         print(f"Unknown gesture: {gesture}")
 
+
 # for testing
 # sound_gesture("double_clap")
