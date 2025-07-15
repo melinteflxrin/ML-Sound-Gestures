@@ -9,7 +9,7 @@ from extract_features import extract_mfcc
 
 
 START_TIME = time.time()
-WARMUP_SECONDS = 3  # ignore predictions for the first 3 seconds 
+WARMUP_SECONDS = 2  # ignore predictions for the first 2 seconds 
 
 
 # load trained SVM model
