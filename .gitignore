@@ -207,9 +207,7 @@ marimo/_lsp/
 __marimo__/
 
 # Ignore audio data and processed feature files
-# These folders contain data you recorded or collected yourself
-# Do NOT commit your raw or processed data to version control
+# These folders contain recorded and collected data
 # Add your own data locally in these folders
-
 data/raw/
 data/processed/
