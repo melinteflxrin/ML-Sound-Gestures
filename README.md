@@ -72,10 +72,14 @@ pip install -r requirements.txt
      SPOTIPY_CLIENT_SECRET=your_client_secret_here
      SPOTIPY_REDIRECT_URI=http://127.0.0.1:8888/callback
      ```
+
 4. **Prepare your audio data:**
    - Place your double clap samples in `data/raw/double_clap/`
    - Place negative samples (not double claps) in `data/raw/negative/`
    - (Optional) Add more gesture folders for future expansion
+
+> **Note:**
+> The `data/raw`, `data/normalized`, and `data/processed` folders (and their subfolders) are included empty (with `.gitkeep` files) on purpose. Populate them with your own audio data to train the model.
 
 
 ## How It Works

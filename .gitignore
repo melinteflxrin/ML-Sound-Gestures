@@ -206,10 +206,20 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# Ignore audio data and processed feature files
+# Ignore audio data and processed feature files except .gitkeep
 # These folders contain recorded and collected data
 # Add your own data locally in these folders
-data/
-data/raw/
-data/processed/
-data/normalized/
+data/raw/double_clap/*
+!data/raw/double_clap/.gitkeep
+
+data/raw/negative/*
+!data/raw/negative/.gitkeep
+
+data/normalized/double_clap/*
+!data/normalized/double_clap/.gitkeep
+
+data/normalized/negative/*
+!data/normalized/negative/.gitkeep
+
+data/processed/*
+!data/processed/.gitkeep
