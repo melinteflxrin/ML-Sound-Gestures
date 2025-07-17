@@ -209,5 +209,7 @@ __marimo__/
 # Ignore audio data and processed feature files
 # These folders contain recorded and collected data
 # Add your own data locally in these folders
+data/
 data/raw/
 data/processed/
+data/normalized/

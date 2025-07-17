@@ -25,14 +25,17 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
 
 
 def sound_gesture(gesture):
-    if gesture == "double_clap":
-        sp.next_track()
-        print("Double clap detected: Skipped to the next track.")
-    elif gesture == "snap":
-        sp.pause_playback()
-        print("Snap detected: Paused playback.")
-    else:
-        print(f"Unknown gesture: {gesture}")
+    try:
+        if gesture == "double_clap":
+            sp.next_track()
+            print("Double clap detected: Skipped to the next track.")
+        elif gesture == "snap":
+            sp.pause_playback()
+            print("Snap detected: Paused playback.")
+        else:
+            print(f"Unknown gesture: {gesture}")
+    except Exception as e:
+        print(f"Spotify command failed: {e}\nMake sure Spotify is open and playing on an active device.")
 
 
 # for testing
