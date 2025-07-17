@@ -130,7 +130,6 @@ python src/connect_spotify.py
     ```
     python src/listen_console.py
     ```
-    - Prints detected gestures to the console.
 
 
 ## Customizing & Extending Gestures
