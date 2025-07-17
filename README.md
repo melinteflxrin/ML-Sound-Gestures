@@ -16,6 +16,22 @@ Control Spotify to skip songs with sound gestures (like double claps) using mach
 
 ---
 
+
+
+## Screenshots
+
+<details>
+<summary>Click to expand screenshots</summary>
+
+
+| Listening State | Double Clap Detected (Song Skipped) |
+|:--------------:|:-----------------------------------:|
+| ![Listening](assets/img1.png) | ![Skipped](assets/img2.png) |
+
+Replace the image paths above with your actual screenshot file locations.
+
+</details>
+
 ## Description
 This project uses your microphone and machine learning to recognize sound gestures (like double claps) to pause or skip songs on Spotify.
 
@@ -61,11 +77,16 @@ pip install -r requirements.txt
    - Place negative samples (not double claps) in `data/raw/negative/`
    - (Optional) Add more gesture folders for future expansion
 
+
 ## How It Works
 1. **Audio Normalization:** Normalize all audio files for consistent feature extraction.
 2. **Feature Extraction:** Extracts MFCC features from your audio files.
 3. **Model Training:** Trains an SVM classifier to recognize gestures.
 4. **Real-Time Detection:** Listens to your microphone, predicts gestures, and controls Spotify.
+
+> **Note**
+> The model only skips songs on double claps and ignores background noises (talking, coughs, typing, music, etc.).
+> For best results, include appropriate negative samples in your training data.
 
 
 ## Script Usage & Order
@@ -98,6 +119,7 @@ python src/connect_spotify.py
 ```
 - This will skip a song to verify your Spotify API setup.
 
+
 **5. Run the application:**
   - **GUI version:** [`src/listen_gui.py`](src/listen_gui.py)
     ```
@@ -107,7 +129,9 @@ python src/connect_spotify.py
   - **Console version:** [`src/listen_console.py`](src/listen_console.py)
     ```
     python src/listen_console.py
-    ``` 
+    ```
+    - Prints detected gestures to the console.
+
 
 ## Customizing & Extending Gestures
 - To add new gestures, update your dataset (add new folders in `data/raw/`), normalize, extract features, and retrain the model.
