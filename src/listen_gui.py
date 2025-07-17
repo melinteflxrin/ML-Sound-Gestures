@@ -3,14 +3,14 @@ import time
 import numpy as np
 import sounddevice as sd
 
-# List all available audio devices for user reference
+# list all available audio devices
 print("Available audio devices:")
 for i, dev in enumerate(sd.query_devices()):
     if dev['max_input_channels'] > 0:
         print(f"Input {i}: {dev['name']}")
 
-# Set this to the index of your desired microphone (see printed list)
-MIC_DEVICE_INDEX = None  # e.g., 2
+# set to index of microphone
+MIC_DEVICE_INDEX = None  # none for device default mic
 import librosa
 import joblib
 import tkinter as tk
@@ -107,15 +107,14 @@ def audio_callback(indata, frames, time_info, status):
         norm_audio = norm_audio / max_val
     update_waveform(norm_audio)
 
-    # ppdate rolling buffer for gesture detection
-
+    # update rolling buffer for gesture detection
     global gesture_buffer, gesture_samples
     gesture_buffer = np.roll(gesture_buffer, -len(audio))
     gesture_buffer[-len(audio):] = audio
     gesture_samples += len(audio)
 
     # only run gesture detection if buffer is full, 
-    # not in warmup, enough new samples, and not in cooldown
+    # not in warmup, and not in cooldown
     global COOLDOWN_ACTIVE, COOLDOWN_END
     now = time.time()
     if now - START_TIME < WARMUP_SECONDS:
@@ -129,7 +128,6 @@ def audio_callback(indata, frames, time_info, status):
     gesture_samples = 0  # reset counter after detection
     # gesture detection on rolling buffer
     peaks, properties = find_peaks(np.abs(gesture_buffer), height=0.2, distance=int(0.08 * SR))
-    print(f"[DEBUG] Peaks found: {len(peaks)} at indices {peaks}, heights: {properties.get('peak_heights')}")
     if len(peaks) < 2:
         return  # not enough claps detected
     # normalize for feature extraction
@@ -141,9 +139,7 @@ def audio_callback(indata, frames, time_info, status):
     # original max amplitude as a feature
     orig_max_amp = np.max(np.abs(gesture_buffer))
     features = np.concatenate([features, [orig_max_amp]])
-    print(f"[DEBUG] Feature vector shape: {features.shape}, values: {features}")
     gesture = predict_gesture(features)
-    print(f"[DEBUG] Predicted gesture: {gesture}")
     if gesture:
         last_gesture = gesture
         last_trigger_time = now
@@ -175,7 +171,7 @@ stream = sd.InputStream(
     samplerate=SR,
     callback=audio_callback,
     blocksize=int(SR * DISPLAY_CHUNK),
-    device=1  # set to mic index; None for default
+    device=MIC_DEVICE_INDEX
 )
 stream.start()
 
