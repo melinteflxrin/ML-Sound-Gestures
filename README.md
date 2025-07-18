@@ -1,7 +1,7 @@
 
 # Sound Gesture Control for Spotify - Machine Learning
 
-Control Spotify to skip songs with sound gestures (like double claps) using machine learning, real-time audio detection, and the Spotify Web API.
+Control Spotify to skip or pause songs with sound gestures (like double claps) using machine learning, real-time audio detection, and the Spotify Web API.
 
 ---
 
