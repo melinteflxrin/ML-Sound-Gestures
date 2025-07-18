@@ -21,14 +21,13 @@ Control Spotify to skip or pause songs with sound gestures (like double claps) u
 ## Screenshots
 
 <details>
-<summary>Click to expand screenshots</summary>
+<summary>Click here to expand screenshots</summary>
 
 
 | Listening State | Double Clap Detected (Song Skipped) |
 |:--------------:|:-----------------------------------:|
 | ![Listening](assets/img1.png) | ![Skipped](assets/img2.png) |
 
-Replace the image paths above with your actual screenshot file locations.
 
 </details>
 
