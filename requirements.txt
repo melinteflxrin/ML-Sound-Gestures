@@ -7,3 +7,7 @@ sounddevice
 joblib
 spotipy
 python-dotenv
+scipy
+seaborn
+pandas
+imbalanced-learn

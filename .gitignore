@@ -215,17 +215,5 @@ data/raw/double_clap/*
 data/raw/negative/*
 !data/raw/negative/.gitkeep
 
-data/raw/finger_snap/*
-!data/raw/finger_snap/.gitkeep
-
-data/normalized/double_clap/*
-!data/normalized/double_clap/.gitkeep
-
-data/normalized/negative/*
-!data/normalized/negative/.gitkeep
-
-data/normalized/finger_snap/*
-!data/normalized/finger_snap/.gitkeep
-
 data/processed/*
 !data/processed/.gitkeep
