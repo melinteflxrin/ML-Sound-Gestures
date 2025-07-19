@@ -47,7 +47,7 @@ class DoubleClap:
             X_filtered, y, test_size=0.2, random_state=42, stratify=y
         )
         
-        # scale features using RobustScaler (less sensitive to outliers)
+        # normalize features using RobustScaler (less sensitive to outliers)
         self.scaler = RobustScaler()
         X_train_scaled = self.scaler.fit_transform(X_train)
         X_test_scaled = self.scaler.transform(X_test)
@@ -59,6 +59,8 @@ class DoubleClap:
         train multiple models
         """
         # calculate class weights for imbalanced data
+        # if I have more negative examples the model pays more attention to 
+        # double clap samples to balance the importance
         classes = np.unique(y_train)
         class_weights = compute_class_weight('balanced', classes=classes, y=y_train)
         class_weight_dict = dict(zip(classes, class_weights))
@@ -109,9 +111,11 @@ class DoubleClap:
             print(f"\\nTraining {name}...")
             
             # use SMOTE to balance the dataset within cross validation
+            # handle imbalanced data by creating artificial examples of the minority class
             smote = SMOTE(random_state=42)
             
             # grid search with cross-validation
+            # automatically finds the optimal configuration for each model
             grid_search = GridSearchCV(
                 config['model'], 
                 config['params'], 
