@@ -69,14 +69,16 @@ def process_folder(folder_path, label):
 
 def main():
     double_clap_folder = "data/normalized/double_clap"
+    finger_snap_folder = "data/normalized/finger_snap"
     negative_folder = "data/normalized/negative"
 
     X_clap, y_clap = process_folder(double_clap_folder, 1)
+    X_snap, y_snap = process_folder(finger_snap_folder, 2)
     X_neg, y_neg = process_folder(negative_folder, 0)
 
     # combine features and labels
-    X = np.array(X_clap + X_neg)
-    y = np.array(y_clap + y_neg)
+    X = np.array(X_clap + X_snap + X_neg)
+    y = np.array(y_clap + y_snap + y_neg)
 
     print("Feature matrix shape:", X.shape)
     print("Labels shape:", y.shape)

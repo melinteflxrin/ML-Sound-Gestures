@@ -4,8 +4,8 @@ import numpy as np
 import librosa
 
 
-input_folder = "data/raw/double_clap"  
-output_folder = "data/normalized/double_clap"  
+input_folder = "data/raw/finger_snap"  
+output_folder = "data/normalized/finger_snap"  
 os.makedirs(output_folder, exist_ok=True)
 
 

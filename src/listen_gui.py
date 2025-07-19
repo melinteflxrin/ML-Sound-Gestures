@@ -10,7 +10,7 @@ for i, dev in enumerate(sd.query_devices()):
         print(f"Input {i}: {dev['name']}")
 
 # set to index of microphone
-MIC_DEVICE_INDEX = None  # none for device default mic
+MIC_DEVICE_INDEX = 1  # none for device default mic
 import librosa
 import joblib
 import tkinter as tk
@@ -146,8 +146,9 @@ def audio_callback(indata, frames, time_info, status):
     features = np.concatenate([features, [orig_max_amp]])
     gesture = predict_gesture(features)
     
-    # step 2: double check with peak detection
+    # step 2: verify with appropriate checks based on gesture type
     if gesture == "double_clap":
+        # For double claps, verify with peak detection
         peaks, properties = find_peaks(np.abs(gesture_buffer), height=0.2, distance=int(0.08 * SR))
         if len(peaks) < 2:
             return  # ML said double_clap but no double peaks found
@@ -160,16 +161,21 @@ def audio_callback(indata, frames, time_info, status):
             if not all(min_interval <= interval <= max_interval for interval in peak_intervals):
                 return  # peaks not properly spaced for double clap
     
+    elif gesture == "snap":
+        # For finger snaps, verify there's at least one clear peak
+        peaks, properties = find_peaks(np.abs(gesture_buffer), height=0.15, distance=int(0.05 * SR))
+        if len(peaks) < 1:
+            return  # ML said snap but no clear peak found
+    
     if gesture:
         last_gesture = gesture
         last_trigger_time = now
         sound_gesture(gesture)
         status_label.config(text=f"Detected: {gesture}", background="lightgreen")
         root.after(1500, lambda: status_label.config(text="Listening...", background="SystemButtonFace"))
-        # start cooldown after double clap
-        if gesture == "double_clap":
-            COOLDOWN_ACTIVE = True
-            COOLDOWN_END = now + COOLDOWN
+        # start cooldown after any gesture
+        COOLDOWN_ACTIVE = True
+        COOLDOWN_END = now + COOLDOWN
     # reset cooldown if time passed
     if COOLDOWN_ACTIVE and now >= COOLDOWN_END:
         COOLDOWN_ACTIVE = False
