@@ -110,7 +110,7 @@ pip install -r requirements.txt
 
 ## Script Usage & Order
 
-**1. Extract advanced features from your audio data:**
+**1. Extract features from your audio data:**
 [`src/extract_features.py`](src/extract_features.py)
 ```
 python src/extract_features.py
@@ -143,6 +143,6 @@ python src/listen.py
 - Automatically skips Spotify tracks when successfully detecting gestures
 
 
-## Customizing & Extending Gestures
+## Customizing Gestures
 - **Adding New Gestures**: Create new folders in `data/raw/` with your gesture samples, then re-run the feature extraction and training pipeline
 - **Spotify Actions**: Edit the `sound_gesture` function in [`src/connect_spotify.py`](src/connect_spotify.py) to map gestures to different Spotify actions (pause, previous track, volume control, etc.)
