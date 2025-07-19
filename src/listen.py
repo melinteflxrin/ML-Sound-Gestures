@@ -118,7 +118,6 @@ class SimpleDoubleClap:
                         
             except KeyboardInterrupt:
                 print("\nStopping detection...")
-                print("Goodbye!")
 
 
 if __name__ == "__main__":
