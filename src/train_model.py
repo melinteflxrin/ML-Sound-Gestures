@@ -1,17 +1,13 @@
 import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
-from sklearn.preprocessing import StandardScaler, RobustScaler
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.preprocessing import RobustScaler
+from sklearn.metrics import classification_report, accuracy_score
 from sklearn.utils.class_weight import compute_class_weight
 import joblib
-import matplotlib.pyplot as plt
-import seaborn as sns
 from imblearn.over_sampling import SMOTE
-from imblearn.pipeline import Pipeline as ImbPipeline
 
 
 class DoubleClap:
@@ -195,27 +191,6 @@ class DoubleClap:
             print(classification_report(y_test, y_pred_ensemble))
         
         return results
-    
-    def plot_feature_importance(self, feature_names=None, top_n=20):
-        """
-        Plot feature importance from Random Forest
-        """
-        if self.feature_importance is None:
-            print("No feature importance available")
-            return
-        
-        # Get top features
-        if feature_names is None:
-            feature_names = [f'Feature_{i}' for i in range(len(self.feature_importance))]
-        
-        indices = np.argsort(self.feature_importance)[::-1][:top_n]
-        
-        plt.figure(figsize=(12, 8))
-        plt.bar(range(top_n), self.feature_importance[indices])
-        plt.xticks(range(top_n), [feature_names[i] for i in indices], rotation=45, ha='right')
-        plt.title(f'Top {top_n} Feature Importance (Random Forest)')
-        plt.tight_layout()
-        plt.show()
     
     def save_models(self, model_dir='data/processed'):
         """

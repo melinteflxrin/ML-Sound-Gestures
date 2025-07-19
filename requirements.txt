@@ -1,13 +1,10 @@
 librosa
 numpy
 scikit-learn
-matplotlib
 soundfile
 sounddevice
 joblib
 spotipy
 python-dotenv
 scipy
-seaborn
-pandas
 imbalanced-learn
