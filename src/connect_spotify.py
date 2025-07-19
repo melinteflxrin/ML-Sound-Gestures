@@ -34,3 +34,13 @@ def sound_gesture(gesture):
                 sp.start_playback()
     except Exception:
         pass
+
+
+if __name__ == "__main__":
+    """test Spotify connection"""
+    try:
+        sp.next_track()
+        print("Successfully skipped track.")
+    except Exception as e:
+        print(f"Spotify connection failed: {e}")
+        print("check your Spotify API credentials and make sure Spotify is running.")

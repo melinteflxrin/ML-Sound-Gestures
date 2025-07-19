@@ -1,7 +1,7 @@
 
 # Sound Gesture Control for Spotify - Machine Learning
 
-Control Spotify to skip or pause songs with sound gestures (like double claps) using machine learning, real-time audio detection, and the Spotify Web API.
+Control Spotify to skip or pause songs with sound gestures (like double claps) using machine learning, audio analysis, ensemble models, real-time audio detection, and the Spotify Web API.
 
 ---
 
@@ -15,8 +15,6 @@ Control Spotify to skip or pause songs with sound gestures (like double claps) u
 - [Customizing Gestures](#customizing-gestures)
 
 ---
-
-
 
 ## Screenshots
 
@@ -32,14 +30,18 @@ Control Spotify to skip or pause songs with sound gestures (like double claps) u
 </details>
 
 ## Description
-This project uses your microphone and machine learning to recognize sound gestures (like double claps) to pause or skip songs on Spotify.
+This project uses your microphone and machine learning to recognize sound gestures (like double claps) to pause or skip songs on Spotify. It extracts many audio features and uses an ensemble of 4 machine learning models for accurate gesture detection.
 
 ## Features
-- Real-time audio gesture recognition
-- Machine learning (SVM + MFCC features)
-- Spotify Web API integration (skip, pause, etc.)
-- Live waveform GUI with gesture feedback
-- Easily extensible for new gestures
+- **Audio Analysis**: extracts temporal, spectral, and onset detection features
+- **Ensemble Machine Learning**: 4-model ensemble (Random Forest, SVM, Gradient Boosting, Neural Network) 
+- **Real-time Detection**: live audio processing with configurable confidence thresholds
+- **Advanced Training**: SMOTE balancing, class weights, and grid search optimization
+- **Spotify Web API**: skip, pause songs etc.
+- **Clean Audio Processing**: DC offset removal, filtering, and normalization
+
+> **Note:**
+> The ensemble ML models are trained to distinguish double claps from common background noises like music, talking, typing, and other sounds.
 
 ## Requirements
 - Spotify Premium account
@@ -47,7 +49,7 @@ This project uses your microphone and machine learning to recognize sound gestur
 - Microphone
 
 **Python packages:**
-- numpy, sounddevice, librosa, joblib, spotipy, python-dotenv, tkinter, matplotlib, scikit-learn
+- librosa, numpy, sounddevice, joblib, spotipy, python-dotenv, scikit-learn, scipy, imbalanced-learn
 
 Install all dependencies with:
 ```
@@ -74,67 +76,73 @@ pip install -r requirements.txt
 
 4. **Prepare your audio data:**
    - Place your double clap samples in `data/raw/double_clap/`
-   - Place negative samples (not double claps) in `data/raw/negative/`
+   - Place negative samples (background noise, music, speech) in `data/raw/negative/`
+   - Ensure diverse training data for robust model performance
    - (Optional) Add more gesture folders for future expansion
 
 > **Note:**
-> The `data/raw`, `data/normalized`, and `data/processed` folders (and their subfolders) are included empty (with `.gitkeep` files) on purpose. Populate them with your own audio data to train the model.
+> The `data/raw` and `data/processed` folders are included empty (with `.gitkeep` files) on purpose. Populate with your own audio data to train the model.
 
 
 ## How It Works
-1. **Audio Normalization:** Normalize all audio files for consistent feature extraction.
-2. **Feature Extraction:** Extracts MFCC features from your audio files.
-3. **Model Training:** Trains an SVM classifier to recognize gestures.
-4. **Real-Time Detection:** Listens to your microphone, predicts gestures, and controls Spotify.
 
-> **Note**
-> The model only skips songs on double claps and ignores background noises (talking, coughs, typing, music, etc.).
-> For best results, include appropriate negative samples in your training data.
+### 1. Audio Preprocessing
+- Cleans up the audio signal by removing noise and normalizing levels
+- Uses RobustScaler normalization to standardize features for consistent ML input
+- Prepares audio for accurate feature extraction
+
+### 2. Feature Extraction
+- Analyzes audio characteristics like timing, frequency, and sound patterns
+- Extracts features that distinguish double claps from other sounds
+- Uses temporal, spectral, and onset detection methods
+
+### 3. Machine Learning Training
+- Trains 4 different ML models: Random Forest, SVM, Gradient Boosting, and Neural Network
+- Uses SMOTE balancing and grid search to optimize performance
+- Combines all models into an ensemble with confidence-weighted voting for better accuracy
+
+### 4. Real-Time Detection
+- Listens to your microphone continuously
+- Checks for double claps every 0.5 seconds using 1.5 second audio samples
+- Uses confidence thresholds and cooldown periods to prevent false triggers
+- Controls Spotify when a double clap is detected
 
 
 ## Script Usage & Order
 
-**1. Normalize your audio data:**
-[`src/normalize.py`](src/normalize.py)
-```
-python src/normalize.py
-```
-- This will normalize all audio files and save them in `data/normalized/`.
-
-**2. Extract features from your normalized audio data:**
+**1. Extract advanced features from your audio data:**
 [`src/extract_features.py`](src/extract_features.py)
 ```
 python src/extract_features.py
 ```
-- This will process your normalized audio files and save `X.npy` and `y.npy` in `data/processed/`.
+- Processes audio files from `data/raw/` and extracts comprehensive audio features
+- Saves processed features as `X.npy` and labels as `y.npy` in `data/processed/`
+- Includes temporal, spectral, and onset detection features
 
-**3. Train the machine learning model:**
-[`src/train_svm.py`](src/train_svm.py)
+**2. Train the ensemble machine learning model:**
+[`src/train_model.py`](src/train_model.py)
 ```
-python src/train_svm.py
+python src/train_model.py
 ```
-- This will train the SVM and save `svm_model.joblib` in `data/processed/`.
+- Trains 4-model ensemble with SMOTE balancing and grid search optimization
+- Saves the ensemble model as `model.joblib` and scaler as `scaler.joblib` in `data/processed/`
 
-**4. Test Spotify connection (optional):**
+**3. Test Spotify connection (optional):**
 [`src/connect_spotify.py`](src/connect_spotify.py)
 ```
 python src/connect_spotify.py
 ```
-- This will skip a song to verify your Spotify API setup.
+- Verifies your Spotify API setup by skipping a track
 
-
-**5. Run the application:**
-  - **GUI version:** [`src/listen_gui.py`](src/listen_gui.py)
-    ```
-    python src/listen_gui.py
-    ```
-    - Shows a live waveform of the audio input
-  - **Console version:** [`src/listen_console.py`](src/listen_console.py)
-    ```
-    python src/listen_console.py
-    ```
+**4. Run the real-time detection application:**
+[`src/listen.py`](src/listen.py)
+```
+python src/listen.py
+```
+- Real-time double clap detection with configurable confidence thresholds
+- Automatically skips Spotify tracks when successfully detecting gestures
 
 
 ## Customizing & Extending Gestures
-- To add new gestures, update your dataset (add new folders in `data/raw/`), normalize, extract features, and retrain the model.
-- Edit `sound_gesture` in [`src/connect_spotify.py`](src/connect_spotify.py) to map new gestures to Spotify actions.
+- **Adding New Gestures**: Create new folders in `data/raw/` with your gesture samples, then re-run the feature extraction and training pipeline
+- **Spotify Actions**: Edit the `sound_gesture` function in [`src/connect_spotify.py`](src/connect_spotify.py) to map gestures to different Spotify actions (pause, previous track, volume control, etc.)
