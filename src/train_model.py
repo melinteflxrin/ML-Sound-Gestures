@@ -18,11 +18,11 @@ class DoubleClap:
         self.feature_importance = None
         
     def load_data(self, features_path, labels_path):
-        """Load the feature data"""
+        """load the feature data"""
         X = np.load(features_path)
         y = np.load(labels_path)
         
-        # Handle any NaN or infinite values
+        # handle any NaN or infinite values
         X = np.nan_to_num(X, nan=0.0, posinf=1e10, neginf=-1e10)
         
         print(f"Loaded data: {X.shape[0]} samples, {X.shape[1]} features")
@@ -32,9 +32,9 @@ class DoubleClap:
     
     def preprocess_data(self, X, y):
         """
-        Advanced preprocessing with scaling and balancing
+        preprocessing with scaling and balancing
         """
-        # Remove features with zero variance
+        # remove features with zero variance
         feature_var = np.var(X, axis=0)
         valid_features = feature_var > 1e-8
         X_filtered = X[:, valid_features]
@@ -42,12 +42,12 @@ class DoubleClap:
         print(f"Removed {np.sum(~valid_features)} zero-variance features")
         print(f"Remaining features: {X_filtered.shape[1]}")
         
-        # Split data first
+        # split data
         X_train, X_test, y_train, y_test = train_test_split(
             X_filtered, y, test_size=0.2, random_state=42, stratify=y
         )
         
-        # Scale features using RobustScaler (less sensitive to outliers)
+        # scale features using RobustScaler (less sensitive to outliers)
         self.scaler = RobustScaler()
         X_train_scaled = self.scaler.fit_transform(X_train)
         X_test_scaled = self.scaler.transform(X_test)
@@ -56,16 +56,16 @@ class DoubleClap:
     
     def train_individual_models(self, X_train, y_train):
         """
-        Train multiple individual models
+        train multiple models
         """
-        # Calculate class weights for imbalanced data
+        # calculate class weights for imbalanced data
         classes = np.unique(y_train)
         class_weights = compute_class_weight('balanced', classes=classes, y=y_train)
         class_weight_dict = dict(zip(classes, class_weights))
         
         print(f"Class weights: {class_weight_dict}")
         
-        # Define models with hyperparameter tuning
+        # define models with hyperparameter tuning
         models_config = {
             'random_forest': {
                 'model': RandomForestClassifier(random_state=42, class_weight='balanced'),
@@ -104,14 +104,14 @@ class DoubleClap:
             }
         }
         
-        # Train and tune each model
+        # train and tune each model
         for name, config in models_config.items():
             print(f"\\nTraining {name}...")
             
-            # Use SMOTE to balance the dataset within cross-validation
+            # use SMOTE to balance the dataset within cross validation
             smote = SMOTE(random_state=42)
             
-            # Grid search with cross-validation
+            # grid search with cross-validation
             grid_search = GridSearchCV(
                 config['model'], 
                 config['params'], 
@@ -121,7 +121,7 @@ class DoubleClap:
                 verbose=1
             )
             
-            # Apply SMOTE and train
+            # SMOTE and train
             X_balanced, y_balanced = smote.fit_resample(X_train, y_train)
             grid_search.fit(X_balanced, y_balanced)
             
@@ -131,34 +131,34 @@ class DoubleClap:
     
     def create_ensemble(self, X_train, y_train):
         """
-        Create ensemble model from individual models
+        create ensemble model from all individual models
         """
-        # Apply SMOTE for ensemble training
+        # apply SMOTE for ensemble training
         smote = SMOTE(random_state=42)
         X_balanced, y_balanced = smote.fit_resample(X_train, y_train)
         
-        # Create voting classifier
+        # create voting classifier
         estimators = [(name, model) for name, model in self.models.items()]
         
         self.ensemble_model = VotingClassifier(
             estimators=estimators,
-            voting='soft'  # Use probability averages
+            voting='soft'  # probability averages
         )
         
         print("\\nTraining ensemble model...")
         self.ensemble_model.fit(X_balanced, y_balanced)
         
-        # Feature importance (from Random Forest)
+        # feature importance (from Random Forest)
         if 'random_forest' in self.models:
             self.feature_importance = self.models['random_forest'].feature_importances_
     
     def evaluate_models(self, X_test, y_test):
         """
-        Evaluate all models on test set
+        evaluate all models on test set
         """
         results = {}
         
-        # Evaluate individual models
+        # evaluate individual models
         for name, model in self.models.items():
             y_pred = model.predict(X_test)
             y_prob = model.predict_proba(X_test)[:, 1]
@@ -174,7 +174,7 @@ class DoubleClap:
             print("Classification Report:")
             print(classification_report(y_test, y_pred))
         
-        # Evaluate ensemble
+        # evaluate ensemble
         if self.ensemble_model:
             y_pred_ensemble = self.ensemble_model.predict(X_test)
             y_prob_ensemble = self.ensemble_model.predict_proba(X_test)[:, 1]
@@ -194,19 +194,19 @@ class DoubleClap:
     
     def save_models(self, model_dir='data/processed'):
         """
-        Save all trained models
+        save all trained models
         """
         import os
         os.makedirs(model_dir, exist_ok=True)
         
-        # Save scaler
+        # save scaler
         joblib.dump(self.scaler, f'{model_dir}/scaler.joblib')
         
-        # Save individual models
+        # save individual models
         for name, model in self.models.items():
             joblib.dump(model, f'{model_dir}/{name}.joblib')
         
-        # Save ensemble
+        # save ensemble
         if self.ensemble_model:
             joblib.dump(self.ensemble_model, f'{model_dir}/model.joblib')
         
@@ -214,7 +214,7 @@ class DoubleClap:
     
     def predict_with_confidence(self, X, confidence_threshold=0.7):
         """
-        Make predictions with confidence scores
+        make predictions with confidence scores
         """
         if self.ensemble_model is None:
             raise ValueError("Ensemble model not trained")
@@ -223,45 +223,44 @@ class DoubleClap:
         probabilities = self.ensemble_model.predict_proba(X_scaled)
         predictions = self.ensemble_model.predict(X_scaled)
         
-        # Only return positive predictions with high confidence
+        # only return positive predictions with high confidence
         confident_predictions = []
         for i, (pred, prob) in enumerate(zip(predictions, probabilities)):
             max_prob = np.max(prob)
             if pred == 1 and max_prob >= confidence_threshold:
                 confident_predictions.append((i, pred, max_prob))
-            elif pred == 0:  # Always trust negative predictions
+            elif pred == 0:  # always trust negative predictions
                 confident_predictions.append((i, pred, max_prob))
             else:
-                confident_predictions.append((i, 0, max_prob))  # Low confidence -> negative
+                confident_predictions.append((i, 0, max_prob))  # low confidence => negative
         
         return confident_predictions
 
 
 def main():
-    # Initialize the model
     model = DoubleClap()
     
-    # Load features
+    # load features
     print("Loading features...")
     X, y = model.load_data('data/processed/X.npy', 'data/processed/y.npy')
     
-    # Preprocess data
+    # preprocess data
     print("\\nPreprocessing data...")
     X_train, X_test, y_train, y_test, valid_features = model.preprocess_data(X, y)
     
-    # Train individual models
+    # train individual models
     print("\\nTraining individual models...")
     model.train_individual_models(X_train, y_train)
     
-    # Create ensemble
+    # create ensemble
     print("\\nCreating ensemble...")
     model.create_ensemble(X_train, y_train)
     
-    # Evaluate models
+    # evaluate models
     print("\\nEvaluating models...")
     results = model.evaluate_models(X_test, y_test)
     
-    # Save models
+    # save models
     model.save_models()
     
     print("\\nTraining completed! Models saved.")
