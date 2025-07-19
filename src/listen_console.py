@@ -30,7 +30,15 @@ START_TIME = time.time()
 
 
 def predict_gesture(features):
+    # get prediction probabilities for confidence checking
+    proba = clf.predict_proba([features])[0]
     label = clf.predict([features])[0]
+    confidence = np.max(proba)
+    
+    # only return gesture if confidence is high enough
+    if confidence < 0.7:  # 70% confidence
+        return None
+        
     if label == 1:
         return "double_clap"
     elif label == 2:
@@ -57,12 +65,7 @@ def audio_callback(indata, frames, time_info, status):
         return
     gesture_samples = 0  # reset counter after detection
 
-    # gesture detection on rolling buffer
-    peaks, _ = find_peaks(np.abs(gesture_buffer), height=0.2, distance=int(0.08 * SR))
-    if len(peaks) < 2:
-        return  # not enough claps detected
-
-    # normalize for feature extraction
+    # step 1: ML to classify the audio first
     norm_gesture = gesture_buffer.copy()
     max_val = np.max(np.abs(norm_gesture))
     if max_val > 0:
@@ -72,6 +75,21 @@ def audio_callback(indata, frames, time_info, status):
     orig_max_amp = np.max(np.abs(gesture_buffer))
     features = np.concatenate([features, [orig_max_amp]])
     gesture = predict_gesture(features)
+    
+    # step 2: double check with peak detection
+    if gesture == "double_clap":
+        peaks, _ = find_peaks(np.abs(gesture_buffer), height=0.2, distance=int(0.08 * SR))
+        if len(peaks) < 2:
+            return  # ML said double_clap but no double peaks found
+        
+        # peaks should be spaced
+        peak_intervals = np.diff(peaks)
+        if len(peak_intervals) > 0:
+            min_interval = int(0.05 * SR)  # minimum 50ms between claps
+            max_interval = int(0.5 * SR)   # maximum 500ms between claps
+            if not all(min_interval <= interval <= max_interval for interval in peak_intervals):
+                return  # peaks not properly spaced for double clap
+
     if gesture:
         print(f"Detected: {gesture}")
         sound_gesture(gesture)
