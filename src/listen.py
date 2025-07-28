@@ -93,10 +93,10 @@ class SimpleDoubleClap:
                     test_stream.stop()
                     test_stream.close()
                     working_device = i
-                    print(f"✓ Using device {i}: {device['name']}")
+                    print(f"[OK] Using device {i}: {device['name']}")
                     break
                 except Exception as e:
-                    print(f"✗ Device {i} failed: {device['name']}")
+                    print(f"[FAIL] Device {i} failed: {device['name']}")
                     continue
         
         if working_device is None:
