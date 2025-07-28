@@ -74,8 +74,37 @@ class SimpleDoubleClap:
         print("Press Ctrl+C to stop")
         print("=" * 40)
         
-        # start audio stream
+        # find a working audio device
+        devices = sd.query_devices()
+        working_device = None
+        
+        print("Searching for working audio device...")
+        for i, device in enumerate(devices):
+            if device['max_input_channels'] > 0:
+                try:
+                    # test this device
+                    test_stream = sd.InputStream(
+                        device=i, 
+                        channels=1, 
+                        samplerate=self.SR, 
+                        blocksize=1024
+                    )
+                    test_stream.start()
+                    test_stream.stop()
+                    test_stream.close()
+                    working_device = i
+                    print(f"✓ Using device {i}: {device['name']}")
+                    break
+                except Exception as e:
+                    print(f"✗ Device {i} failed: {device['name']}")
+                    continue
+        
+        if working_device is None:
+            raise RuntimeError("No working audio input device found! Try closing other audio applications.")
+        
+        # start audio stream with working device
         with sd.InputStream(
+            device=working_device,
             channels=1,
             samplerate=self.SR,
             callback=self.audio_callback,
