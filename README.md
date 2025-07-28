@@ -47,10 +47,10 @@ This project uses your microphone and machine learning to recognize sound gestur
 - Microphone
 
 **Python packages:**
-- librosa, numpy, sounddevice, joblib, spotipy, python-dotenv, scikit-learn, scipy, imbalanced-learn
+- All dependencies are pinned to tested versions for compatibility
 
 Install all dependencies with:
-```
+```bash
 pip install -r requirements.txt
 ```
 
@@ -133,12 +133,21 @@ python src/connect_spotify.py
 - Verifies your Spotify API setup by skipping a track
 
 **4. Run the real-time detection application:**
-[`src/listen.py`](src/listen.py)
+
+**Option 1: GUI Application**
+[`src/gui_app.py`](src/gui_app.py)
+```bash
+python src/gui_app.py
 ```
+- Simple GUI with adjustable settings
+- Easy start/stop controls
+
+**Option 2: Command-line Application**
+[`src/listen.py`](src/listen.py)
+```bash
 python src/listen.py
 ```
-- Real-time double clap detection with configurable confidence thresholds
-- Automatically skips Spotify tracks when successfully detecting gestures
+- Same but with console output
 
 
 ## Customizing Gestures
