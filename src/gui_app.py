@@ -430,7 +430,6 @@ def main():
     """main entry point"""
     root = tk.Tk()
     
-    # try to set a nice theme
     try:
         style = ttk.Style()
         available_themes = style.theme_names()
