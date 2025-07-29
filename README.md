@@ -3,6 +3,12 @@
 
 Control Spotify to skip or pause songs with sound gestures (like double claps) using machine learning, audio analysis, ensemble models, real-time audio detection, and the Spotify Web API.
 
+## Demo Video
+
+ADD YOUTUBE LINK HERE LATER
+
+> A short video of the app skipping songs on Spotify by double clapping.
+
 ---
 
 ## Table of Contents
