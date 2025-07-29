@@ -5,7 +5,7 @@ Control Spotify to skip or pause songs with sound gestures (like double claps) u
 
 ## Demo Video
 
-![YouTube](https://img.shields.io/badge/-FF0000?style=flat&logo=youtube&logoColor=white) ADD YOUTUBE LINK HERE LATER
+![YouTube](https://img.shields.io/badge/-FF0000?style=flat&logo=youtube&logoColor=white) https://www.youtube.com/watch?v=0vx897GzOvQ
 
 > A short video of the app skipping songs on Spotify by double clapping.
 
